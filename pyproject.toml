@@ -1,0 +1,46 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rt4-roll-period"
+version = "1.1.0"
+description = "Amplitude-aware roll-period GM correction and reporting for ship stability workflows"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [
+    { name = "R4RPI", email = "solo@r4rpi.org" },
+]
+keywords = ["naval-architecture", "ship-stability", "inclining-experiment", "roll-period", "elliptic-integral", "righting-arm", "GZ"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+dependencies = [
+    "numpy>=1.21",
+    "scipy>=1.7",
+]
+
+[project.optional-dependencies]
+examples = ["matplotlib>=3.5", "jupyter"]
+dev = ["pytest>=7.0", "build>=1.2", "twine>=6.0"]
+
+[project.urls]
+Homepage = "https://github.com/resonant4/rt4-roll-period"
+Documentation = "https://github.com/resonant4/rt4-roll-period#api-reference"
+Issues = "https://github.com/resonant4/rt4-roll-period/issues"
+Changelog = "https://github.com/resonant4/rt4-roll-period/blob/main/CHANGELOG.md"
+Source = "https://github.com/resonant4/rt4-roll-period"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rt4_roll_period"]

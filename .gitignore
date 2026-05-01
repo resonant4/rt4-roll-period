@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.venv/
+
+# OS/editor local files
+.DS_Store
+.idea/
+
+# Test/coverage outputs
+.coverage
+coverage.xml
+htmlcov/

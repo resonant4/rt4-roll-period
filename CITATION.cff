@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use rt4-roll-period, please cite this software."
+title: "rt4-roll-period: Amplitude-Aware Roll-Period GM Correction and Reporting"
+version: "1.1.0"
+date-released: "2026-05-01"
+authors:
+  - name: "R4RPI"
+license: MIT
+repository-code: "https://github.com/resonant4/rt4-roll-period"
+abstract: >
+  Python reference implementation for amplitude-aware roll-period GM correction
+  in ship stability workflows. The package supports exact linear-GZ correction,
+  validated wall-sided correction, arbitrary GZ-table period ratios, table
+  quality warnings, and practitioner-facing report selection.
+keywords:
+  - naval architecture
+  - ship stability
+  - roll period
+  - inclining experiment
+  - righting arm
+  - GZ curve
+  - elliptic integral
