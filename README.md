@@ -191,7 +191,7 @@ Paper forthcoming. For now:
   title = {rt4-roll-period: Amplitude-Aware Roll-Period GM Correction and Reporting},
   author = {R4RPI},
   year = {2026},
-  version = {1.1.0},
+  version = {1.1.1},
   url = {https://github.com/resonant4/rt4-roll-period},
   license = {MIT}
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.1.1] - 2026-05-01
+
+### Changed
+- Reissued the public package from the recreated sanitized repository history.
+- No runtime API or numerical behavior changes from `1.1.0`.
+
 ## [1.1.0] - 2026-05-01
 
 ### Added
