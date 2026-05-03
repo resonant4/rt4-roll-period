@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.1.2] - 2026-05-04
 
 ### Fixed
 - Documentation correctly describes the direction of the small-angle bias. In the linear-GZ regime the small-angle formula `GM = (C*B/T_obs)^2` *under*-estimates true GM (because `T_obs > T0` for finite-amplitude rolls), not over-estimates. Affected: `core.py` docstrings, `README.md`, `CLAUDE.md`, test labels, and example notebook/HTML copy.

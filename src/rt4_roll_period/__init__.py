@@ -99,7 +99,7 @@ from .core import (
     C_LOOKUP,
 )
 
-__version__ = "1.1.1"
+__version__ = "1.1.2"
 __all__ = [
     "roll_period_exact",
     "roll_period_small_angle",
