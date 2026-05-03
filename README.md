@@ -4,7 +4,7 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-Amplitude-aware roll-period GM correction and reporting for ship stability workflows. The package corrects the systematic GM overestimation caused by the standard small-angle approximation and selects the richest available method from vessel GZ tables, validated wall-sided correction, or a linear-GZ fallback.
+Amplitude-aware roll-period GM correction and reporting for ship stability workflows. The package corrects the systematic amplitude bias of the standard small-angle approximation (which under-estimates GM for finite-amplitude rolls in the linear-GZ regime) and selects the richest available method from vessel GZ tables, validated wall-sided correction, or a linear-GZ fallback.
 
 ## Publication Status
 
@@ -18,7 +18,7 @@ During a ship inclining experiment, the standard formula:
 GM = (C * B / T_obs)^2
 ```
 
-systematically **overestimates GM** because it assumes small roll angles. At 20-degree amplitude, this causes ~1.54% GM bias, meaning the vessel is certified as more stable than it actually is.
+implicitly assumes the roll period is independent of amplitude, which is only true in the small-angle limit. The observed period `T_obs` is longer than the small-amplitude natural period `T0` (finite-amplitude pendulum effect), so plugging `T_obs` into the formula systematically **under-estimates GM** in the linear-GZ regime. At 20-degree amplitude this is ~1.54%; the practitioner reads a GM smaller than the ship actually has, which is conservative on stability margin but pessimistic on permitted loading. Wall-sided hull effects can shift the bias in the opposite direction; both corrections are exposed by the library.
 
 ## The Solution
 
@@ -65,9 +65,10 @@ GM_corrected = recover_gm_rt4(
     B=28.0,             # beam (m)
 )
 
-# How much does the small-angle formula overestimate GM?
+# Amplitude correction factor: GM_small_angle / GM_true
 factor = gm_correction_factor(phi_max_deg=20.0)
-# factor = 0.9847... (small-angle GM is ~1.54% too high)
+# factor = 0.9847... (small-angle estimate is ~1.54% smaller than true GM)
+# Recover true GM by dividing the small-angle estimate by this factor.
 
 # Wall-sided correction when BM is known and the case is inside
 # the validated envelope: phi <= 30 deg, BM/GM <= 4
@@ -104,11 +105,11 @@ report = build_roll_period_report(
 |---|---|
 | `roll_period_exact(phi_max_deg, T0)` | Exact period via K(m) elliptic integral |
 | `roll_period_small_angle(T0)` | Small-angle period (returns T0, for comparison) |
-| `gm_correction_factor(phi_max_deg)` | Multiplicative correction: `GM_true = factor * GM_small_angle` |
+| `gm_correction_factor(phi_max_deg)` | Multiplicative factor: `GM_small_angle / GM_true`; recover linear-GZ truth with `GM_true = GM_small_angle / factor` |
 | `recover_gm_rt4(T_obs, phi_max_deg, C, B)` | Recover corrected GM from observed period and amplitude |
 | `wall_sided_shape_factor(phi_max_deg, bm_gm)` | Interpolated `T_wall / T_linear_K` factor for validated wall-sided range |
 | `wall_sided_period_ratio(phi_max_deg, bm_gm)` | Interpolated wall-sided `T/T0` ratio |
-| `wall_sided_gm_correction_factor(phi_max_deg, bm_gm)` | Wall-sided `GM_true / GM_small_angle` correction factor |
+| `wall_sided_gm_correction_factor(phi_max_deg, bm_gm)` | Wall-sided factor `GM_small_angle / GM_true` for the validated envelope |
 | `recover_gm_wall_sided(T_obs, phi_max_deg, C, B, BM)` | Recover GM with validated wall-sided interpolation and root solving |
 | `recover_gm_small_angle(T_obs, C, B)` | Recover GM without correction (baseline) |
 
@@ -140,7 +141,7 @@ report = build_roll_period_report(
 | Function | Description |
 |---|---|
 | `period_vs_amplitude_table(T0, angles)` | Table of exact vs small-angle periods |
-| `gm_overestimate_table(angles)` | Table of GM overestimation by amplitude |
+| `gm_overestimate_table(angles)` | Table of GM amplitude bias by amplitude (despite the historical name, returns the magnitude by which the small-angle method *under*-estimates true GM in the linear-GZ regime) |
 
 ## Limitations
 
@@ -176,11 +177,14 @@ T = 4 * sqrt(I / (W * GM)) * K(sin^2(phi_max / 2))
 
 where T0 = 2*pi*sqrt(I/(W*GM)) is the small-angle period. This result is due to Bernoulli (1749) and is classical mechanics, not novel research.
 
-The key insight for inclining experiments: when T_obs is measured at amplitude phi_max, the small-angle formula T0 = T_obs underestimates T0, which overestimates GM. The correction factor is:
+The key insight for inclining experiments: when `T_obs` is measured at finite amplitude `phi_max`, `T_obs > T0` (the finite-amplitude period is always longer than the small-amplitude limit). Plugging `T_obs` into the small-angle formula `GM = (C*B/T)^2` therefore over-states the period that "should" appear in the formula and under-states GM. The exact correction is:
 
 ```
-GM_true = GM_small_angle * [pi / (2 * K(sin^2(phi_max / 2)))]^2
+GM_true = GM_small_angle * [2 * K(sin^2(phi_max / 2)) / pi]^2
+        = GM_small_angle / gm_correction_factor(phi_max)
 ```
+
+`gm_correction_factor` returns `[pi / (2*K(m))]^2 <= 1`, i.e. the ratio `GM_small_angle / GM_true`. Divide the small-angle estimate by this factor (or multiply by `[2K/pi]^2`) to recover the true GM.
 
 ## Citation
 

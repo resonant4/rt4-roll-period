@@ -125,12 +125,15 @@ def roll_period_small_angle(T0: float) -> float:
 
 def gm_correction_factor(phi_max_deg: float) -> float:
     """
-    Amplitude correction factor: GM_true / GM_small_angle.
+    Amplitude correction factor: GM_small_angle / GM_true.
 
-    The small-angle method over-estimates GM because it ignores the
-    amplitude dependence of the observed period.  The correction is:
+    The small-angle formula GM = (C*B/T_obs)^2 plugs the observed
+    finite-amplitude period T_obs in place of the small-amplitude
+    natural period T0.  Because T_obs > T0 (finite-amplitude pendulum
+    period grows with amplitude), the small-angle method *under*-estimates
+    GM.  The correction factor is:
 
-        GM_true / GM_sa = (pi / (2 * K(m)))^2,  m = sin^2(phi_max/2)
+        GM_sa / GM_true = (pi / (2 * K(m)))^2,  m = sin^2(phi_max/2)
 
     Parameters
     ----------
@@ -140,9 +143,9 @@ def gm_correction_factor(phi_max_deg: float) -> float:
     Returns
     -------
     float
-        Multiplicative correction factor (<= 1 for phi_max > 0).
-        Multiply the small-angle GM estimate by this factor to obtain
-        the corrected value.
+        Multiplicative factor (<= 1 for phi_max > 0).
+        GM_true = GM_small_angle / factor (i.e. divide, not multiply,
+        to recover the true GM from the small-angle estimate).
     """
     phi_rad = math.radians(phi_max_deg)
     m = math.sin(phi_rad / 2.0) ** 2
@@ -239,9 +242,11 @@ def wall_sided_period_ratio(phi_max_deg: float, bm_gm: float) -> float:
 
 def wall_sided_gm_correction_factor(phi_max_deg: float, bm_gm: float) -> float:
     """
-    Wall-sided GM correction factor relative to small-angle GM.
+    Wall-sided GM factor relative to the small-angle estimate.
 
-    Returns GM_wall / GM_small_angle for the validated wall-sided envelope.
+    Returns GM_small_angle / GM_wall_true for the validated wall-sided
+    envelope. Divide the small-angle estimate by this factor to recover
+    the wall-sided GM implied by the period ratio.
     """
     ratio = wall_sided_period_ratio(phi_max_deg, bm_gm)
     return 1.0 / (ratio * ratio)
@@ -303,7 +308,8 @@ def recover_gm_small_angle(T_obs: float, C: float, B: float) -> float:
     Returns
     -------
     float
-        GM estimate in metres (biased high when roll amplitude is large).
+        GM estimate in metres (biased low when roll amplitude is large;
+        the true GM is larger because T_obs > T0 for finite amplitude).
     """
     return (C * B / T_obs) ** 2
 
@@ -1123,12 +1129,24 @@ def period_vs_amplitude_table(T0: float,
 
 def gm_overestimate_table(phi_range_deg=None) -> tuple:
     """
-    Compute GM overestimation error from the small-angle method.
+    Compute the GM bias of the small-angle method, by amplitude.
+
+    Despite the historical name, the small-angle method actually
+    *under*-estimates GM (T_obs > T0 implies (C*B/T_obs)^2 < (C*B/T0)^2).
+    The returned percentage is the magnitude of that bias:
+
+        bias_pct[i] = (GM_true - GM_sa) / GM_sa * 100   (positive)
+
+    i.e. how much larger the true GM is than the naive small-angle
+    estimate.  At 20 deg amplitude this is ~1.54%.
+
+    Note: the function name is preserved for backwards compatibility.
+    A correctly-named alias (`gm_amplitude_bias_table`) is planned for
+    v1.2.
 
     Returns
     -------
-    (phi_arr, overest_pct_arr)
-        overest_pct_arr[i] = (GM_sa - GM_true) / GM_true * 100
+    (phi_arr, bias_pct_arr)
     """
     if phi_range_deg is None:
         phi_range_deg = np.linspace(1, 45, 45)
