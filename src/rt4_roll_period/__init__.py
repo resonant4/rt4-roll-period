@@ -19,7 +19,8 @@ roll_period_small_angle(T0)
     Small-angle (uncorrected) period — returns T0.
 
 gm_correction_factor(phi_max_deg)
-    Multiplicative correction: GM_true = factor * GM_small_angle.
+    Multiplicative factor: GM_small_angle / GM_true.
+    Recover linear-GZ truth with GM_true = GM_small_angle / factor.
 
 recover_gm_rt4(T_obs, phi_max_deg, C, B)
     Recover corrected GM from observed period + amplitude.

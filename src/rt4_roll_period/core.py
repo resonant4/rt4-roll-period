@@ -242,9 +242,11 @@ def wall_sided_period_ratio(phi_max_deg: float, bm_gm: float) -> float:
 
 def wall_sided_gm_correction_factor(phi_max_deg: float, bm_gm: float) -> float:
     """
-    Wall-sided GM correction factor relative to small-angle GM.
+    Wall-sided GM factor relative to the small-angle estimate.
 
-    Returns GM_wall / GM_small_angle for the validated wall-sided envelope.
+    Returns GM_small_angle / GM_wall_true for the validated wall-sided
+    envelope. Divide the small-angle estimate by this factor to recover
+    the wall-sided GM implied by the period ratio.
     """
     ratio = wall_sided_period_ratio(phi_max_deg, bm_gm)
     return 1.0 / (ratio * ratio)

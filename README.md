@@ -105,11 +105,11 @@ report = build_roll_period_report(
 |---|---|
 | `roll_period_exact(phi_max_deg, T0)` | Exact period via K(m) elliptic integral |
 | `roll_period_small_angle(T0)` | Small-angle period (returns T0, for comparison) |
-| `gm_correction_factor(phi_max_deg)` | Multiplicative correction: `GM_true = factor * GM_small_angle` |
+| `gm_correction_factor(phi_max_deg)` | Multiplicative factor: `GM_small_angle / GM_true`; recover linear-GZ truth with `GM_true = GM_small_angle / factor` |
 | `recover_gm_rt4(T_obs, phi_max_deg, C, B)` | Recover corrected GM from observed period and amplitude |
 | `wall_sided_shape_factor(phi_max_deg, bm_gm)` | Interpolated `T_wall / T_linear_K` factor for validated wall-sided range |
 | `wall_sided_period_ratio(phi_max_deg, bm_gm)` | Interpolated wall-sided `T/T0` ratio |
-| `wall_sided_gm_correction_factor(phi_max_deg, bm_gm)` | Wall-sided `GM_true / GM_small_angle` correction factor |
+| `wall_sided_gm_correction_factor(phi_max_deg, bm_gm)` | Wall-sided factor `GM_small_angle / GM_true` for the validated envelope |
 | `recover_gm_wall_sided(T_obs, phi_max_deg, C, B, BM)` | Recover GM with validated wall-sided interpolation and root solving |
 | `recover_gm_small_angle(T_obs, C, B)` | Recover GM without correction (baseline) |
 
