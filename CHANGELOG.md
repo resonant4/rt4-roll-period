@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+
+### Fixed
+- Documentation correctly describes the direction of the small-angle bias. In the linear-GZ regime the small-angle formula `GM = (C*B/T_obs)^2` *under*-estimates true GM (because `T_obs > T0` for finite-amplitude rolls), not over-estimates. Affected: `core.py` docstrings, `README.md`, `CLAUDE.md`, test labels, and example notebook/HTML copy.
+- No code paths or numerical results changed; this is a documentation correction only.
+
+### Notes
+- The public function `gm_overestimate_table` retains its v1.x name for backwards compatibility despite the misnomer. A correctly-named alias (`gm_amplitude_bias_table`) is planned for v1.2.
+
 ## [1.1.1] - 2026-05-01
 
 ### Changed

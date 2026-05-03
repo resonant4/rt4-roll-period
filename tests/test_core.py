@@ -9,7 +9,7 @@ Run with:
 S4 benchmarks (from validation run):
   - K(m) formula max error: 211.059 ppm vs numerical ODE (linear GZ)
   - GM recovery: RT4 mean error < 1e-6 m (vs SA mean ~20.7 mm)
-  - GM overestimation at 20 deg: ~1.54% (small-angle)
+  - GM bias at 20 deg: ~1.54% (small-angle under-estimates true GM)
   - RT4 improvement over small-angle: >20 billion times
   - Wall-sided max period error: 21.5% (formula is approximate)
 """
@@ -120,18 +120,19 @@ def test_gm_correction_factor():
     cf0 = gm_correction_factor(0.001)
     _check("correction_factor_near_zero_is_one", abs(cf0 - 1.0) < 1e-4)
 
-    # At 20 deg, small-angle over-estimates GM by ~1.54%
+    # At 20 deg, small-angle under-estimates true GM by ~1.54%
+    # (T_obs > T0 implies (C*B/T_obs)^2 < (C*B/T0)^2).
     cf20 = gm_correction_factor(20.0)
-    overest_pct = (1.0 / cf20 - 1.0) * 100.0
+    bias_pct = (1.0 / cf20 - 1.0) * 100.0  # (GM_true - GM_sa)/GM_sa
     _check(
-        "GM_overestimate_at_20deg_between_1_and_2_pct",
-        1.0 < overest_pct < 2.0,
-        f"overest={overest_pct:.4f}%"
+        "GM_bias_at_20deg_between_1_and_2_pct",
+        1.0 < bias_pct < 2.0,
+        f"bias={bias_pct:.4f}%"
     )
     _check(
-        "GM_overestimate_at_20deg_matches_S4_1p54pct",
-        abs(overest_pct - 1.54) < 0.1,
-        f"overest={overest_pct:.4f}%"
+        "GM_bias_at_20deg_matches_S4_1p54pct",
+        abs(bias_pct - 1.54) < 0.1,
+        f"bias={bias_pct:.4f}%"
     )
 
     # Correction factor is always <= 1

@@ -252,7 +252,7 @@
       GM = (C &times; B / T&#8320;)&sup2;<br>
       <br>
       <span class="label">SMALL-ANGLE BASELINE (no correction)</span><br>
-      GM<sub>sa</sub> = (C &times; B / T<sub>obs</sub>)&sup2;&nbsp;&nbsp; [biased high at large amplitudes]
+      GM<sub>sa</sub> = (C &times; B / T<sub>obs</sub>)&sup2;&nbsp;&nbsp; [biased low at large amplitudes; T_obs > T0 in the denominator]
     </div>
     <p style="font-size:0.8rem;color:var(--gray);">
       K(m) &mdash; complete elliptic integral of the first kind from classical Bernoulli/Euler mechanics.
@@ -365,7 +365,7 @@
             <tr><td>K(m)</td><td id="r-Km">—</td></tr>
             <tr><td>T&#8320; (small-angle)</td><td id="r-T0-sa">—</td></tr>
             <tr class="rt4-row"><td>T&#8320; (RT4 corrected)</td><td id="r-T0-rt4">—</td></tr>
-            <tr><td>SA overestimation</td><td class="pos" id="r-overest">—</td></tr>
+            <tr><td>SA bias (under-estimate)</td><td class="pos" id="r-overest">—</td></tr>
           </table>
         </div>
       </div>
@@ -401,7 +401,7 @@
         </div>
         <div class="big-metric" style="margin-top:10px;">
           <div class="num" id="r-cf-factor-vessel">—</div>
-          <div class="desc">SA overestimation at this amplitude</div>
+          <div class="desc">SA bias at this amplitude (true GM is larger by this %)</div>
         </div>
       </div>
     </div>
@@ -414,7 +414,7 @@
       <canvas id="chartPeriod" height="220"></canvas>
     </div>
     <div class="card">
-      <h2>GM Overestimation (Small-Angle Method)</h2>
+      <h2>GM Bias of the Small-Angle Method (true GM larger than SA estimate)</h2>
       <canvas id="chartGM" height="220"></canvas>
     </div>
   </div>
@@ -430,7 +430,7 @@
             <th>K(m)</th>
             <th>T / T&#8320;</th>
             <th>Correction factor</th>
-            <th>SA overestimation (%)</th>
+            <th>SA bias (%)</th>
           </tr>
         </thead>
         <tbody id="sweep-body"></tbody>
@@ -586,7 +586,7 @@ function initCharts() {
       labels,
       datasets: [
         {
-          label: 'GM overestimation (%)',
+          label: 'SA bias (true GM is larger by this %)',
           data: [],
           borderColor: '#c0392b',
           backgroundColor: 'rgba(192,57,43,0.1)',
@@ -613,7 +613,7 @@ function initCharts() {
       },
       scales: {
         x: { title: { display: true, text: 'Roll amplitude (deg)' } },
-        y: { title: { display: true, text: 'SA overestimation (%)' } }
+        y: { title: { display: true, text: 'SA bias: (GM_true - GM_sa)/GM_sa (%)' } }
       }
     }
   });
